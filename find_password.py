@@ -4,6 +4,7 @@ Dr. Bart's script to try and figure out the passwords stored in the "mysterious_
 Some parts are incomplete! Please help me by filling in the blanks.
 """
 
+from __future__ import annotations
 from zipfile import Path
 import json
 
@@ -24,7 +25,7 @@ def search_zip(folder: Path, file_type: str) -> list[Path]:
     for folder_item in folder.iterdir():
         # Is it a directory?
         if folder_item.is_dir():
-            result.extend([folder_item])
+            result.extend(search_zip(folder_item, file_type))
         # Is it a file?
         if folder_item.is_file():
             if folder_item.name.endswith(file_type):
@@ -105,10 +106,10 @@ def main(location: list[str], target_time: int):
     root = Path(ZIP_FILE_NAME)
     # Search the Zip File
     security_file = search_zip(root, ".json")[0]
+    print(security_file)
+    return
     # Read the JSON file
     security = json.loads(security_file.read_bytes())
-    print()
-    return
     # Access the JSON path
     passwords = access_path(security, location)
     # Binary Search the Times

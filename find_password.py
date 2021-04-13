@@ -44,9 +44,9 @@ def access_path(data: dict or any, path: list[str]) -> any:
         any: The data stored in the last nested level of the `data` dictionary.
     """
     if path:
-        ___ = path[___]
-        ___ = path[___:]
-        return access_path(data[___], ___)
+        key = path[0]
+        path = path[1:]
+        return access_path(data[key], path)
     return data
 
 
@@ -65,14 +65,14 @@ def binary_search_time(values: list[any], low: int, high: int, target: int) -> a
          any: The data stored in the target element.
     """
     if low <= high:
-        middle_index = (___ + ___) // 2
-        middle_value = values[___]['time']
-        if middle_value < ___:
-            return binary_search_time(values, ___ + 1, ___, target)
-        elif middle_value > ___:
-            return binary_search_time(values, ___, ___ - 1, target)
+        middle_index = (low + high) // 2
+        middle_value = values[middle_index]['time']
+        if middle_value < target:
+            return binary_search_time(values, middle_index + 1, high, target)
+        elif middle_value > target:
+            return binary_search_time(values, low, middle_index - 1, target)
         else:
-            return values[___]
+            return values[target]
     return values[high]
 
 
@@ -87,6 +87,34 @@ def solve(maze: str, at: int, visited: set[int]) -> str:
     Returns:
         str: The final emoji at the end of the maze.
     """
+    symbols = ['X', '→', '←', '⮆', '⮄', '⇆']
+    if at in visited:
+        return maze[at]
+
+    visited.add(at)
+
+    if maze[at] == 'X':
+        return maze[at]
+    elif maze[at] == '→':
+        answer = solve(maze, at + int(maze[at+1]), visited)
+    elif maze[at] == '←':
+        answer = solve(maze, at - int(maze[at+1]), visited)
+    elif maze[at] == '⮆':
+        answer = solve(maze, at + int(maze[at+1]), visited)
+        if answer in symbols:
+            answer = solve(maze, at + int(maze[at+2]), visited)
+    elif maze[at] == '⮄':
+        answer = solve(maze, at - int(maze[at + 1]), visited)
+        if  answer in symbols:
+            answer = solve(maze, at - int(maze[at + 2]), visited)
+    elif maze[at] == '⇆':
+        answer = solve(maze, at - int(maze[at + 1]), visited)
+        if answer in symbols:
+            answer = solve(maze, at + int(maze[at + 2]), visited)
+    else:
+        #If an emoji here
+        return maze[at]
+    return answer
 
 
 def main(location: list[str], target_time: int):
@@ -106,8 +134,6 @@ def main(location: list[str], target_time: int):
     root = Path(ZIP_FILE_NAME)
     # Search the Zip File
     security_file = search_zip(root, ".json")[0]
-    print(security_file)
-    return
     # Read the JSON file
     security = json.loads(security_file.read_bytes())
     # Access the JSON path
@@ -118,8 +144,9 @@ def main(location: list[str], target_time: int):
     # Solve the 1d Maze
     answer = solve(maze, 0, set())
     # Print the Answer
+    print(maze)
     print(answer)
 
 
 if __name__ == '__main__':
-    main(["Basement 2", "Quadrant A", "Region 1", "North"], 6)
+    main(["Basement 4", "Quadrant B", "Interrogation Chamber 1", "South"], 14)

@@ -72,7 +72,7 @@ def binary_search_time(values: list[any], low: int, high: int, target: int) -> a
         elif middle_value > target:
             return binary_search_time(values, low, middle_index - 1, target)
         else:
-            return values[target]
+            return values[middle_index]
     return values[high]
 
 
@@ -144,9 +144,8 @@ def main(location: list[str], target_time: int):
     # Solve the 1d Maze
     answer = solve(maze, 0, set())
     # Print the Answer
-    print(maze)
     print(answer)
 
 
 if __name__ == '__main__':
-    main(["Basement 4", "Quadrant B", "Interrogation Chamber 1", "South"], 14)
+    main(["Basement 2", "Quadrant A", "Region 1", "North"], 6)
